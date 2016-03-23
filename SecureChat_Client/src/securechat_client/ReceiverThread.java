@@ -44,7 +44,7 @@ public class ReceiverThread extends Thread {
             rcvPkt=(Packet) inStream.readObject();
             switch(rcvPkt.getType()){
          
-                case 1: // Authintication
+                case 1: // Authintication packet
                     System.out.println("Recvd");
                     if(rcvPkt.getData1().equals("VALID")){ 
                        SecureChat_Client.loginFomr1.setVisible(false);
@@ -57,11 +57,11 @@ public class ReceiverThread extends Thread {
                         LoginForm.errorLbl.setVisible(true);
                     }
                     break;
-                case 2: //DATA
+                case 2: //DATA packet
                     
                     
                     break;
-                case 3: //rcvd SessionID
+                case 3: //rcvd SessionID packet
                     sessionID=rcvPkt.getSessionID(); // get the sessionID
 
                     ChatForm newChat = new ChatForm();

@@ -16,16 +16,9 @@ public class Info {
    private  static String serverIP="192.168.0.16";
    private  static String clientID;
    private static Socket clientSocket;
-   private static String sessionID;
 
-    public static String getSessionID() {
-        return sessionID;
-    }
 
-    public static void setSessionID(String sessionID) {
-        Info.sessionID = sessionID;
-    }
-   
+
    
 
     public static Socket getClientSocket() {

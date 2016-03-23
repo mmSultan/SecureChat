@@ -15,7 +15,7 @@ public class SecureChat_Client {
 
 public static LoginForm loginFomr1 = new LoginForm();
 
-    
+    // This is the class that has the main function to call other class
     public static void main(String[] args) throws InterruptedException {
   
         loginFomr1.setVisible(true);
