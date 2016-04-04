@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Packet implements Serializable  {
     private static final long serialVersionUID  = 1L;
-    private short type; //1-Authentication, 2-DATA,3-ReqSessionID 4-newChat  5-UpdatechatList, 6-UpdateOnLineLis, 7-FileTransfer, 8-....., 9-CloseConnecton
+    private short type; //1-Authentication, 2-Text chat ,3-ReqSessionID 4-newChat  5-UpdatechatList, 6-UpdateOnLineLis, 7-FileTransfer, 8-Request Chat History, ....., 9-CloseConnecton
     private String data1;
     private String data2;
     private String clientID;
@@ -20,9 +20,19 @@ public class Packet implements Serializable  {
     private byte[] file ;
     private HashMap <String,String> onlineList = new HashMap<>();
     private boolean addToList;
+    private boolean createFileSocket;
+    private int publicKey;
 
     public Packet() {
         
+    }
+
+    public boolean isCreateFileSocket() {
+        return createFileSocket;
+    }
+
+    public void setCreateFileSocket(boolean createFileSocket) {
+        this.createFileSocket = createFileSocket;
     }
     
     public Packet(short type, String data1, String data2, String clientID, List <String> destID) {
@@ -31,6 +41,14 @@ public class Packet implements Serializable  {
         this.data2 = data2;
         this.clientID = clientID;
         this.destIDList = destID;
+    }
+
+    public int getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(int publicKey) {
+        this.publicKey = publicKey;
     }
 
     public boolean isAddToList() {
@@ -78,7 +96,9 @@ public class Packet implements Serializable  {
     }
 
     public void setDestIDList(List<String> destIDList) {
-        this.destIDList = destIDList;
+        for (String userID : destIDList){
+            this.destIDList.add(userID);
+        }
     }
 
     public String getSessionID() {

@@ -19,10 +19,10 @@ import securechat_client.SenderThread;
 public class MainForm extends javax.swing.JFrame {
     public static Socket clientSocket;
     private Packet sendPkt;
-    public static HashMap <String,String> tempList  ;   
+    public static HashMap <String,String> tempOnlineList  ;   // has the online clients  
     
     public static String getclientID(String name){ // search for clientID by Its name       
-        for (Map.Entry <String , String> entry : tempList.entrySet()) {
+        for (Map.Entry <String , String> entry : tempOnlineList.entrySet()) {
                 if (entry.getValue().equals(name)) {
                     System.out.println(entry.getKey());
                     return entry.getKey();
@@ -34,15 +34,16 @@ public class MainForm extends javax.swing.JFrame {
     
     public MainForm() {
         initComponents();
-        clientSocket=Info.getClientSocket();
-        tempList.remove(Info.getClientID()); // remove current user from online
-        onlineList.setListData(tempList.values().toArray()); // add oline users
+        this.setLocationRelativeTo(null);
+        clientSocket=Info.getMainClientSocket();
+        tempOnlineList.remove(Info.getClientID()); // remove current user from online
+        onlineList.setListData(tempOnlineList.values().toArray()); // add online users
         this.setTitle(Info.getClientID());
         
     }
     public static void updateList(){
-        onlineList.setListData(tempList.values().toArray()); // add oline users
-        for(Map.Entry <String,String> e : tempList.entrySet()){
+        onlineList.setListData(tempOnlineList.values().toArray()); // add oline users
+        for(Map.Entry <String,String> e : tempOnlineList.entrySet()){
             System.out.println("LIST: "+e.getKey() +"   "+e.getValue());
         }
     }
@@ -64,6 +65,7 @@ public class MainForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         newWindowBtn = new javax.swing.JButton();
         logoutBtn = new javax.swing.JButton();
+        RequestHistoryBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocation(new java.awt.Point(100, 200));
@@ -96,6 +98,8 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        RequestHistoryBtn.setText("Request History");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,9 +114,10 @@ public class MainForm extends javax.swing.JFrame {
                         .addGap(32, 32, 32)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(newWindowBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(newWindowBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                    .addComponent(logoutBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                    .addComponent(RequestHistoryBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(37, 37, 37))
         );
         layout.setVerticalGroup(
@@ -128,6 +133,8 @@ public class MainForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(newWindowBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(RequestHistoryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
                         .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(19, 19, 19))))
         );
@@ -136,7 +143,8 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void newWindowBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newWindowBtnActionPerformed
-            String destID;
+
+        String destID;
             destID=getclientID((String) onlineList.getSelectedValue()); // get Client Main ID
             System.out.println("DEST ID:"+destID);
             sendPkt = new Packet();
@@ -195,6 +203,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton RequestHistoryBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton logoutBtn;

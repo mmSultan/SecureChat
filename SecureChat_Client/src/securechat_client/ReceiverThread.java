@@ -12,6 +12,9 @@ import Messages.Packet;
 import Forms.LoginForm;
 import Forms.MainForm;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
  
 
@@ -21,11 +24,13 @@ import java.util.Map;
  */
 public class ReceiverThread extends Thread {
     //private String clientID;
-    private final Socket clientSocket;
+    private Socket clientSocket;
     private ObjectInputStream inStream;
     private Packet rcvPkt;
     private Packet sendPkt;
     private String sessionID;
+    private static Socket fileClientSocket;
+    private FileServices fileServices;
 
 
     public ReceiverThread(Socket clientSocket ) {
@@ -47,9 +52,18 @@ public class ReceiverThread extends Thread {
                 case 1: // Authintication packet
                     System.out.println("Recvd");
                     if(rcvPkt.getData1().equals("VALID")){ 
+                       // create a socekt for receiving files;
+                       fileClientSocket= new Socket(Info.getServerIP(),Info.getServerPort());
+                       new ReceiverThread(fileClientSocket).start();//recv thread for files;
+                       sendPkt = new Packet();
+                       sendPkt.setType((short)7);
+                       sendPkt.setClientID(Info.getClientID());
+                       sendPkt.setCreateFileSocket(true);
+                       new SenderThread(sendPkt,fileClientSocket).start();// send the packet
+                       Info.setFileClientSocket(fileClientSocket);
+                        
                        SecureChat_Client.loginFomr1.setVisible(false);
-                       MainForm.tempList=rcvPkt.getOnlineList();
-                       
+                       MainForm.tempOnlineList=rcvPkt.getOnlineList();
                        new MainForm().setVisible(true);
 
                     } else { // invalid user or pass
@@ -57,10 +71,7 @@ public class ReceiverThread extends Thread {
                         LoginForm.errorLbl.setVisible(true);
                     }
                     break;
-                case 2: //DATA packet
-                    
-                    
-                    break;
+
                 case 3: //rcvd SessionID packet
                     sessionID=rcvPkt.getSessionID(); // get the sessionID
 
@@ -75,28 +86,27 @@ public class ReceiverThread extends Thread {
                     case 6: //rcvd updateOnline List Pkt.
                         Map.Entry<String, String> entry = rcvPkt.getOnlineList().entrySet().iterator().next();
                         if(rcvPkt.isAddToList()){ // add new user
-                            MainForm.tempList.put(entry.getKey(), entry.getValue());
+                            MainForm.tempOnlineList.put(entry.getKey(), entry.getValue());
                             MainForm.updateList();
                            ChatForm.updateOnlineList();
                         }else{ //remove user from online
-                            MainForm.tempList.remove(entry.getKey());
+                            MainForm.tempOnlineList.remove(entry.getKey());
                             MainForm.updateList();
                             ChatForm.updateOnlineList();
                         }
  
                     break;
+                    
+                     case 7:
+                    System.out.println("7 recevd ... client");
+                    fileServices = new FileServices();
+                    fileServices.saveFile(rcvPkt);
+                    JOptionPane.showMessageDialog(null, rcvPkt.getData1()+" file received from "
+                        +MainForm.tempOnlineList.get(rcvPkt.getData2())+"\n Stored at c:\\Secure Chat client\\Received Files");
+                    
+                    break;
             }//switch
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
                 System.out.println("RECEIVED : "+rcvPkt.getClientID()+" "+rcvPkt.getData1());
 
             } // while
@@ -105,6 +115,14 @@ public class ReceiverThread extends Thread {
             System.out.println(ex);
         }
         
+        try {
+        //    inStream.close();
+            clientSocket.close();
+            System.out.println(" Closing socket"+ clientSocket);
+        } catch (IOException ex) {
+            Logger.getLogger(ReceiverThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         System.out.println("Thread Closed");
  
     

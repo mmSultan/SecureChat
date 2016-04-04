@@ -12,21 +12,39 @@ import java.net.Socket;
  * @author Mohammed Muayad
  */
 public class Info {
-   private  static int serverPort=10000; 
-   private  static String serverIP="192.168.0.16";
+   private static  int serverPort; 
+   private static  String serverIP;
    private  static String clientID;
-   private static Socket clientSocket;
+   private static Socket mainClientSocket;
+   private static Socket fileClientSocket;
+
+    public static void setServerPort(int serverPort) {
+        Info.serverPort = serverPort;
+    }
+
+    public static void setServerIP(String serverIP) {
+        Info.serverIP = serverIP;
+    }
+    
+    public static Socket getFileClientSocket() {
+        return fileClientSocket;
+    }
+    
+
+    public static void setFileClientSocket(Socket fileClientSocket) {
+        Info.fileClientSocket = fileClientSocket;
+    }
 
 
 
    
 
-    public static Socket getClientSocket() {
-        return clientSocket;
+    public static Socket getMainClientSocket() {
+        return mainClientSocket;
     }
 
-    public static void setClientSocket(Socket clientSocket) {
-        Info.clientSocket = clientSocket;
+    public static void setMainClientSocket(Socket mainClientSocket) {
+        Info.mainClientSocket = mainClientSocket;
     }
 
     public static int getServerPort() {
